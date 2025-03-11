@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Карта с переключателем по датам</title>
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    #menu {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="menu">
+    <label for="date-select">Выберите дату:</label>
+    <select id="date-select">
+      <option value="layer1">Дата 1</option>
+      <option value="layer2">Дата 2</option>
+      <option value="layer3">Дата 3</option>
+    </select>
+  </div>
+  <div id="map"></div>
+  <script>
+    // Инициализация карты
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://api.maptiler.com/maps/basic/style.json?key=8zLPQKtsZEgAvaTqIbHF',
+      center: [37.618423, 55.751244], // Центр карты (Москва)
+      zoom: 10
+    });
+
+    // Добавление слоев
+    map.on('load', () => {
+      // Слой для даты 1
+      map.addSource('layer1', {
+        type: 'vector',
+        url: 'https://api.maptiler.com/tiles/9683c9c5-e159-46cb-966f-896afd419b00/tiles.json?key=8zLPQKtsZEgAvaTqIbHF'
+      });
+      map.addLayer({
+        id: 'layer1',
+        type: 'circle',
+        source: 'layer1',
+        paint: {
+          'circle-radius': 5,
+          'circle-color': '#FF0000'
+        }
+      });
+
+      // Слой для даты 2
+      map.addSource('layer2', {
+        type: 'vector',
+        url: 'https://api.maptiler.com/tiles/YOUR_LAYER2_ID/tiles.json?key=8zLPQKtsZEgAvaTqIbHF'
+      });
+      map.addLayer({
+        id: 'layer2',
+        type: 'circle',
+        source: 'layer2',
+        paint: {
+          'circle-radius': 5,
+          'circle-color': '#00FF00'
+        }
+      });
+
+      // Скрыть все слои, кроме первого
+      map.setLayoutProperty('layer2', 'visibility', 'none');
+    });
+
+    // Переключатель слоев
+    document.getElementById('date-select').addEventListener('change', (e) => {
+      const selectedLayer = e.target.value;
+      const layers = ['layer1', 'layer2', 'layer3'];
+      layers.forEach(layer => {
+        map.setLayoutProperty(layer, 'visibility', layer === selectedLayer ? 'visible' : 'none');
+      });
+    });
+  </script>
+</body>
+</html>
