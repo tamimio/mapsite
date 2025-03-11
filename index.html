@@ -85,6 +85,13 @@
         map.setLayoutProperty(layer, 'visibility', layer === selectedLayer ? 'visible' : 'none');
       });
     });
+
+    map.on('click', 'layer1', (e) => {
+      new maplibregl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`<h3>${e.features[0].properties.name}</h3>`)
+        .addTo(map);
+    });
   </script>
 </body>
 </html>
